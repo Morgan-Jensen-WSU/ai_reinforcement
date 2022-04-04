@@ -67,14 +67,14 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         "*** YOUR CODE HERE ***"
         # get transition model and init Q-Value
-        transition = self.mdp.getTransitionStatesAndProbs(state, action)
-        qValue = 0
+        tmodel = self.mdp.getTransitionStatesAndProbs(state, action)
+        qValue = 0.0
 
-        # Calculate the Q-Value for each possible transition
-        # using reward and discount
-        for t in transition:
-            reward = self.mdp.getReward(state, action, t[0])
-            qValue += reward + self.discount*(self.values[t[0]] * t[1])
+        # calc reward and then calc Q-Value using reward and discount
+        for t, p in tmodel:
+            reward = self.mdp.getReward(state, action, t)
+            discountValue = self.discount * self.values[t]
+            qValue += p * (reward + discountValue)
 
         return qValue
 
