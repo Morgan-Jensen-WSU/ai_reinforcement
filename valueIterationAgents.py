@@ -54,7 +54,13 @@ class ValueIterationAgent(ValueEstimationAgent):
                 if self.mdp.isTerminal(s):
                     tempValues[s] = self.mdp.getReward(s, 'exit', '')
                 else:
-                    tempValues[s] = self.computeActionFromValues(s)
+                    maxValue = -9999999999
+                    for a in self.mdp.getPossibleActions(s):
+                        qv = self.computeQValueFromValues(s, a)
+                        if qv > maxValue:
+                            maxValue = qv
+
+                    tempValues[s] = maxValue
             self.values = tempValues
 
     def getValue(self, state):
@@ -75,8 +81,7 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # calc reward and then calc Q-Value using reward and discount
         for t, p in tmodel:
-            reward = self.mdp.getReward(state, action, t)
-            print("PO-> T: " + str(t) + " Value: " + str(self.values[t]))
+            reward = self.mdp.getReward(state, action, t)  # R(s, a, s')
             discountValue = self.discount * float(self.values[t])
             qValue += p * (reward + discountValue)
 
